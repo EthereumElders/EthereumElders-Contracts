@@ -34,18 +34,17 @@ library ContractsVoteDetailesLib {
  *  if any elder voted yet owner can not edit contract vote details
  */ 
     
-      modifier TempContractVoteIsEmpty(){
-          require(_ContractVoteDetails.VotersCount==0 ,"Temp Contract Vote Is not Empty");
-          _;
+      function TempContractVoteIsEmpty(ContractVoteDetails storage _ContractVoteDetails)internal view returns(bool){
+          return _ContractVoteDetails.VotersCount==0 ;
+          
       }
     
         /**
  * @dev if Temp Contract Vote Details Is Empty or not
  */ 
-         modifier   ContractVoteDetailsValid(){
-              require(_ContractVoteDetails.ContractAddress != address(0)&&_ContractVoteDetails.ContractRole !=0 ,"contract data not valid");
-             
-               _;
+        function   ContractVoteDetailsValid(ContractVoteDetails storage _ContractVoteDetails)internal view returns(bool){
+              return _ContractVoteDetails.ContractAddress != address(0)&&_ContractVoteDetails.ContractRole !=0 ;
+ 
           }
           
                   
@@ -54,22 +53,22 @@ library ContractsVoteDetailesLib {
  * TempContractVote has t be Empty
  */ 
     
-    function SetContractVoteDetails( address  _contractAddress,
+    function SetContractVoteDetails(ContractVoteDetails storage _ContractVoteDetails, address  _contractAddress,
         uint _contractRole,
         bool _isForAdd)
-        public 
-        TempContractVoteIsEmpty()
-        SenderIsOwner(msg.sender)
+       internal
         {
-        _ContractVoteDetails =ContractVoteDetails (_contractAddress,
-          _contractRole, _isForAdd,0,0);
+        _ContractVoteDetails.ContractAddress =_contractAddress;
+         _ContractVoteDetails.ContractRole=_contractRole;
+         _ContractVoteDetails.IsForAdd=_isForAdd;
+         
     }
             
                      
      /**
  * @dev  getter for vote details for elders review
  */ 
-     function GetContractVoteDetails()
+     function GetContractVoteDetails(ContractVoteDetails storage _ContractVoteDetails)
         public view returns(   address,
         uint,
         bool ,
@@ -81,16 +80,15 @@ library ContractsVoteDetailesLib {
       /**
  * @dev to Empty the ContractVoteDetails after voting
  */ 
-    function EmptyContractVoteDetails()
+    function EmptyContractVoteDetails(ContractVoteDetails storage _ContractVoteDetails)
      internal 
-        TempContractVoteIsEmpty()
-        SenderIsOwner(msg.sender)
+      
      {
         _ContractVoteDetails.ContractAddress = address(0);
         _ContractVoteDetails.ContractRole=0;
         _ContractVoteDetails.AgrredVoicesCount=0;
          _ContractVoteDetails.IsForAdd=false;
-         SetContractVoteEndTimeSpan(0);
+       
     }
  
     
