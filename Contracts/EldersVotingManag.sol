@@ -9,11 +9,14 @@ pragma solidity ^ 0.5.1;
 */
 
 import "./EldersUtilities.sol";
+import "./ContractsVoteDetailesLib.sol";
+import "./EldersVoteDetailesLib.sol";
 contract EldersVotingManag 
 {
     
      using EldersUtilities for address[];
-     
+    using ContractsVoteDetailesLib for ContractsVoteDetailesLib.ContractVoteDetails;
+      using EldersVoteDetailesLib for EldersVoteDetailesLib.ElderVoteDetails;
      //parameters
     address private  _owner;
  /**
@@ -50,51 +53,17 @@ contract EldersVotingManag
       
    //events
      
-
-      
-      /**
- * @dev contracts vote details
- * @param  ContractAddress : is the contract address to vote on
- * @param  ContractRole : is the contract role as your logic Increased
- *  @param  IsForAdd : true if voting is for adding new contract
- *  @param  VotersCount : total count for all voters Increased according to each vote
- *  @param  AgrredVoicesCount : total count for all agreed  voices Increased according to each vote
- */ 
-   struct  ContractVoteDetails {
-        address  ContractAddress;
-        uint ContractRole;
-        bool IsForAdd;
-     uint VotersCount;
-     uint AgrredVoicesCount;
-    }
-
-    /**
- * @dev Elders vote details
- * @param  EldersForVoteAddress : is the elder address to vote on 
- *  @param  IsForAdd : true if voting is for adding new contract
- *  @param  VotersCount : total count for all voters Increased according to each vote
- *  @param  AgrredVoicesCount : total count for all agreed  voices Increased according to each vote
- */ 
-     struct ElderVoteDetails {
-        address  EldersForVoteAddress;
-        bool IsForAdd;
-       uint VotersCount;
-   uint AgrredVoicesCount;
-    }
-      
+ 
         /**
  * @dev storages to save vote details in it
  * if it empty you can not vote or add contracts
  * if any elder voted yet owner can not edit  vote details
  * to be empty after voting is must
  */   
-    ContractVoteDetails internal  _ContractVoteDetails;
-    ElderVoteDetails private _ElderVoteDetails;
+    ContractsVoteDetailesLib.ContractVoteDetails internal  _ContractVoteDetails;
+   EldersVoteDetailesLib.ElderVoteDetails private _ElderVoteDetails;
     
-    
-    
-    
-    
+ 
     //mappings
 
            /**
@@ -157,8 +126,8 @@ contract EldersVotingManag
             /**
  * @dev if Temp Contract Vote Details Is Empty or not
  */ 
-         modifier   ContractVoteDetailsValid(){
-              require(_ContractVoteDetails.ContractAddress != address(0)&&_ContractVoteDetails.ContractRole !=0 ,"contract data not valid");
+         modifier   ContractVoteDetailsIsValid(){
+              require(  _ContractVoteDetails.ContractVoteDetailsValid() ,"contract data not valid");
              
                _;
           }
@@ -177,13 +146,10 @@ contract EldersVotingManag
        _;
           }
           
-          
-          
-          
-        //functions  
-          
  
           
+        //functions  
+ 
           /**
  * @dev add default elders to Elders mapp and set minimum Elders Percentage to eccept Voting
  * to be implemented from EldersLogicManag
@@ -214,10 +180,8 @@ contract EldersVotingManag
         TempContractVoteIsEmpty()
         SenderIsOwner(msg.sender)
         {
-        _ContractVoteDetails =ContractVoteDetails (_contractAddress,
-          _contractRole, _isForAdd,0,0);
-    }
-            
+       _ContractVoteDetails.SetContractVoteDetails (_contractAddress, _contractRole, _isForAdd);
+    } 
      /**
  * @dev  getter for vote details for elders review
  */ 
@@ -227,8 +191,7 @@ contract EldersVotingManag
         bool ,
      uint)
         {
-       return ( _ContractVoteDetails.ContractAddress, _ContractVoteDetails.ContractRole ,
-       _ContractVoteDetails.IsForAdd,  _ContractVoteDetails.VotersCount  )  ;
+       return   _ContractVoteDetails.GetContractVoteDetails()  ;
     }
       /**
  * @dev to Empty the ContractVoteDetails after voting
@@ -238,10 +201,7 @@ contract EldersVotingManag
         TempContractVoteIsEmpty()
         SenderIsOwner(msg.sender)
      {
-        _ContractVoteDetails.ContractAddress = address(0);
-        _ContractVoteDetails.ContractRole=0;
-        _ContractVoteDetails.AgrredVoicesCount=0;
-         _ContractVoteDetails.IsForAdd=false;
+        _ContractVoteDetails. EmptyContractVoteDetails();
          SetContractVoteEndTimeSpan(0);
     }
     
@@ -254,19 +214,18 @@ contract EldersVotingManag
  */ 
  
     function VoteOnNewContract(address _elderAddress, bool _isAgree) public
-    ElderAddressIsValid(_elderAddress,true) ContractVoteNotExist(_elderAddress) ContractVoteDetailsValid() ContractVoteTimeSpanIsValid()
+    ElderAddressIsValid(_elderAddress,true) ContractVoteNotExist(_elderAddress)  ContractVoteDetailsIsValid() ContractVoteTimeSpanIsValid()
     {
         uint result =0;
         if(_isAgree){
             result =1;
-           _ContractVoteDetails.AgrredVoicesCount++;
         }else
         {
              result =2;
         }
         
         TempContractVote[_elderAddress]=result;
-        _ContractVoteDetails.VotersCount++;
+        _ContractVoteDetails.NewVoteOnContract(_isAgree);
         
     }
  
@@ -288,10 +247,23 @@ contract EldersVotingManag
          uint result =100*( _ContractVoteDetails.AgrredVoicesCount/ _ContractVoteDetails.VotersCount);
          return result>=50;
      }
+     
+  
  
+      
          /**
    
-     
+       function SetElderVoteDetails( address  _elderAddress,
+       
+        bool _isForAdd)
+        public 
+        TempElderVoteIsEmpty()
+        SenderIsOwner(msg.sender)
+        {
+        _ElderVoteDetails =ElderVoteDetails ( _elderAddress,
+           _isForAdd,0,0);
+    }
+    
      function AddNewElderVote(_elderAddress ,_isAgree);
  
       function SetElderVoteEndTimeSpan(_endVoteTimeSpan);
