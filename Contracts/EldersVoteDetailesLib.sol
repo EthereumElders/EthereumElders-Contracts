@@ -25,24 +25,28 @@ library EldersVoteDetailesLib {
    uint AgrredVoicesCount;
     }
     
+ 
+    
+    
+    
       /**
  * @dev if Temp Elder Vote Is Empty or not
  *  if any elder voted yet owner can not edit Elder vote details
  */ 
     
-      modifier TempElderVoteIsEmpty(){
-          require(_ElderVoteDetails.VotersCount==0 ,"Temp Elder Vote Is not Empty");
-          _;
+     function TempElderVoteIsEmpty(ElderVoteDetails storage _ElderVoteDetails)internal view returns(bool){
+          return _ElderVoteDetails.VotersCount==0 ;
+          
       }
     
         /**
  * @dev if Temp Elder Vote Details Is Empty or not
  */ 
-         modifier   ElderVoteDetailsValid(){
-              require(_ElderVoteDetails.ElderAddress != address(0) ,"contract data not valid");
-             
-               _;
+        function   ElderVoteDetailsValid(ElderVoteDetails storage _ElderVoteDetails)internal view returns(bool){
+              return _ElderVoteDetails. EldersForVoteAddress != address(0)  ;
+ 
           }
+          
           
                   
      /**
@@ -50,43 +54,41 @@ library EldersVoteDetailesLib {
  * TempContractVote has t be Empty
  */ 
     
-    function SetElderVoteDetails( address  _elderAddress,
+    function SetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails, address  _elderAddress,
        
         bool _isForAdd)
         public 
-        TempContractVoteIsEmpty()
-        SenderIsOwner(msg.sender)
         {
-        _ElderVoteDetails =ElderVoteDetails (_elderAddress,
-           _isForAdd,0,0);
+        _ElderVoteDetails.EldersForVoteAddress=_elderAddress;
+         _ElderVoteDetails.IsForAdd=_isForAdd;
+           
     }
             
                      
      /**
  * @dev  getter for vote details for elders review
  */ 
-     function GetElderVoteDetails()
+     function GetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails)
         public view returns(   address,
       
         bool ,
      uint)
         {
-       return ( _elderVoteDetails.ElderAddress ,
+       return ( _ElderVoteDetails. EldersForVoteAddress ,
        _ElderVoteDetails.IsForAdd,  _ElderVoteDetails.VotersCount  )  ;
     }
       /**
  * @dev to Empty the ElderVoteDetails after voting
  */ 
-    function EmptyElderoteDetails()
+    function EmptyElderoteDetails(ElderVoteDetails storage _ElderVoteDetails)
      internal 
-        TempElderVoteIsEmpty()
-        SenderIsOwner(msg.sender)
+   
      {
-        _ElderVoteDetails.ElderAddress = address(0);
+        _ElderVoteDetails. EldersForVoteAddress = address(0);
  
         _ElderVoteDetails.AgrredVoicesCount=0;
          _ElderVoteDetails.IsForAdd=false;
-         SetElderVoteEndTimeSpan(0);
+      
     }
  
     
