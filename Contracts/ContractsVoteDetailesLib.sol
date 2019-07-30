@@ -90,6 +90,24 @@ library ContractsVoteDetailesLib {
          _ContractVoteDetails.IsForAdd=false;
        
     }
+    
+   /**
+ * @dev New Vote Onlogic contract
+ *  ElderAddress has to be exist
+ * ElderAddress must not voted before
+ * ContractVoteDetai ls Valid
+ * ContractVoteTimeSpan > now
+ */ 
+ 
+    function NewVoteOnContract(ContractVoteDetails storage _ContractVoteDetails,bool _isAgree) public
+    {
+
+        if(_isAgree){ 
+           _ContractVoteDetails.AgrredVoicesCount++;
+        }  
+        _ContractVoteDetails.VotersCount++;
+        
+    }
  
     
 }
