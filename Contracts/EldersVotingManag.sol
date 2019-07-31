@@ -306,6 +306,14 @@ contract EldersVotingManag {
         _ElderVoteDetails.EmptyElderVoteDetails();
         SetElderVoteEndTimeSpan(0);
     }
-
+    
+    
+    
+    function GetElderVoteResult(address _ElderAddress) public view
+   EldersVotersPersentageIsValid() ElderVoteTimeSpanIsValid() returns(bool _result) {
+        require(_ElderAddress ==  _ElderVoteDetails.EldersForVoteAddress, "Elder address not valid");
+        uint result = 100 * (_ElderVoteDetails.AgrredVoicesCount / _ElderVoteDetails.VotersCount);
+        return result >= 50;
+    }
     
 }
