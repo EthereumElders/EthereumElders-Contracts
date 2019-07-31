@@ -118,6 +118,23 @@ contract EldersVotingManag {
         require(Elders[_elderAddress] == _hasToBe, " Elder address as not valid");
         _;
     }
+    modifier ElderVoteNotExist(address _elderAddress) {
+        require(TempElderVote[_elderAddress] == 0, "Elder Vote for this elder is Exist");
+        _;
+    }
+    
+    modifier ElderVoteDetailsIsValid(){
+        require(_ElderVoteDetails.ElderVoteDetailsValid(), "elder data not valid");
+        _;
+    }
+    modifier ElderVoteTimeSpanIsValid(){
+        require(_elderVoteTimeSpan > now, "Elder Vote TimeSpan Is not Valid");
+        _;
+    }
+    modifier TempElderVoteIsEmpty() {
+        require(_ElderVoteDetails.VotersCount == 0, "Temp Elder Vote Is not Empty");
+        _;
+    }
     /**
      * @dev if  elder account Address had been voted before on the current contract
      */
@@ -230,7 +247,9 @@ contract EldersVotingManag {
         _contractVoteTimeSpan = _endVoteTimeSpan;
     }
 
-
+    function SetElderVoteEndTimeSpan(uint _endVoteTimeSpan) public SenderIsOwner(msg.sender) {
+        _elderVoteTimeSpan = _endVoteTimeSpan;
+    }
     /**
      * @dev  Get Contract Vote Result
      *  Voters Persentage has to be Valid
@@ -248,7 +267,6 @@ contract EldersVotingManag {
     /**
    
        function SetElderVoteDetails( address  _elderAddress,
-       
         bool _isForAdd)
         public 
         TempElderVoteIsEmpty()
@@ -265,4 +283,29 @@ contract EldersVotingManag {
      function AddNewElder(_elderAddress);
      function GetEldersVoteDetails()
      */
+
+     function GetElderVoteDetails() public view returns(address,
+        bool,
+        uint) {
+        return _ElderVoteDetails.GetElderVoteDetails();
+    }
+
+    function VoteOnElder(address _elderAddress, bool _isAgree) public
+    ElderAddressIsValid(_elderAddress, true) ElderVoteNotExist(_elderAddress) ElderVoteDetailsIsValid() ElderVoteTimeSpanIsValid() {
+        uint result = 0;
+        if (_isAgree) {
+            result = 1;
+        } else {
+            result = 2;
+        }
+        TempElderVote[_elderAddress] = result;
+        _ElderVoteDetails.NewVoteOnElder(_isAgree);
+    }
+
+    function EmptyElderVoteDetails() internal TempElderVoteIsEmpty() SenderIsOwner(msg.sender) {
+        _ElderVoteDetails.EmptyElderVoteDetails();
+        SetElderVoteEndTimeSpan(0);
+    }
+
+    
 }

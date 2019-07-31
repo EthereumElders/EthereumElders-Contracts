@@ -36,7 +36,6 @@ library EldersVoteDetailesLib {
     
      function TempElderVoteIsEmpty(ElderVoteDetails storage _ElderVoteDetails)internal view returns(bool){
           return _ElderVoteDetails.VotersCount==0 ;
-          
       }
     
         /**
@@ -55,41 +54,39 @@ library EldersVoteDetailesLib {
  */ 
     
     function SetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails, address  _elderAddress,
-       
         bool _isForAdd)
-        public 
-        {
-        _ElderVoteDetails.EldersForVoteAddress=_elderAddress;
-         _ElderVoteDetails.IsForAdd=_isForAdd;
-           
-    }
-            
-                     
+        public {
+            _ElderVoteDetails.EldersForVoteAddress=_elderAddress;
+            _ElderVoteDetails.IsForAdd=_isForAdd;
+            }
      /**
  * @dev  getter for vote details for elders review
  */ 
      function GetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails)
-        public view returns(   address,
-      
-        bool ,
-     uint)
+        public view returns(address, bool, uint)
         {
-       return ( _ElderVoteDetails. EldersForVoteAddress ,
-       _ElderVoteDetails.IsForAdd,  _ElderVoteDetails.VotersCount  )  ;
-    }
+            return (
+                _ElderVoteDetails. EldersForVoteAddress,
+                _ElderVoteDetails.IsForAdd,
+                _ElderVoteDetails.VotersCount
+            );
+        }
       /**
  * @dev to Empty the ElderVoteDetails after voting
  */ 
-    function EmptyElderoteDetails(ElderVoteDetails storage _ElderVoteDetails)
-     internal 
-   
-     {
-        _ElderVoteDetails. EldersForVoteAddress = address(0);
- 
+    function EmptyElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails) internal
+    {
+        _ElderVoteDetails.EldersForVoteAddress = address(0);
         _ElderVoteDetails.AgrredVoicesCount=0;
-         _ElderVoteDetails.IsForAdd=false;
-      
+        _ElderVoteDetails.IsForAdd=false;
     }
- 
     
+
+    function NewVoteOnElder(ElderVoteDetails storage _ElderVoteDetails,bool _isAgree) public
+    {
+        if(_isAgree){ 
+           _ElderVoteDetails.AgrredVoicesCount++;
+        }  
+        _ElderVoteDetails.VotersCount++;
+    }
 }
