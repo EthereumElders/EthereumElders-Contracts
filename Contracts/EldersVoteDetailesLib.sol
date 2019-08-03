@@ -48,29 +48,8 @@ library EldersVoteDetailesLib {
           
           
                   
-     /**
- * @dev Set ElderVoteDetails
- * TempContractVote has t be Empty
- */ 
-    
-    function SetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails, address  _elderAddress,
-        bool _isForAdd)
-        public {
-            _ElderVoteDetails.EldersForVoteAddress=_elderAddress;
-            _ElderVoteDetails.IsForAdd=_isForAdd;
-            }
-     /**
- * @dev  getter for vote details for elders review
- */ 
-     function GetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails)
-        public view returns(address, bool, uint)
-        {
-            return (
-                _ElderVoteDetails. EldersForVoteAddress,
-                _ElderVoteDetails.IsForAdd,
-                _ElderVoteDetails.VotersCount
-            );
-        }
+   
+   
       /**
  * @dev to Empty the ElderVoteDetails after voting
  */ 
@@ -80,9 +59,31 @@ library EldersVoteDetailesLib {
         _ElderVoteDetails.AgrredVoicesCount=0;
         _ElderVoteDetails.IsForAdd=false;
     }
+      /**
+ * @dev Set ElderVoteDetails
+ * TempContractVote has t be Empty
+ */ 
     
-
-    function NewVoteOnElder(ElderVoteDetails storage _ElderVoteDetails,bool _isAgree) public
+    function SetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails, address  _elderAddress,
+        bool _isForAdd)
+        internal{
+            _ElderVoteDetails.EldersForVoteAddress=_elderAddress;
+            _ElderVoteDetails.IsForAdd=_isForAdd;
+            }
+    
+  /**
+ * @dev  getter for vote details for elders review
+ */ 
+     function GetElderVoteDetails(ElderVoteDetails storage _ElderVoteDetails)
+        internal  view returns(address, bool, uint)
+        {
+            return (
+                _ElderVoteDetails.EldersForVoteAddress,
+                _ElderVoteDetails.IsForAdd,
+                _ElderVoteDetails.VotersCount
+            );
+        }
+    function NewVoteOnElder(ElderVoteDetails storage _ElderVoteDetails,bool _isAgree) internal
     {
         if(_isAgree){ 
            _ElderVoteDetails.AgrredVoicesCount++;
