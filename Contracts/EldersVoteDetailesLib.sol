@@ -6,9 +6,7 @@ pragma solidity ^ 0.5.1;
 @notice compatible with  v0.5.10 commit.5a6ea5b1 
 * @dev EldersVoteDetailesLib   is a helper library  
 */
-
  
-
 library EldersVoteDetailesLib {
      
     /**
@@ -26,9 +24,6 @@ library EldersVoteDetailesLib {
     }
     
  
-    
-    
-    
       /**
  * @dev if Temp Elder Vote Is Empty or not
  *  if any elder voted yet owner can not edit Elder vote details
@@ -45,10 +40,7 @@ library EldersVoteDetailesLib {
               return _ElderVoteDetails. EldersForVoteAddress != address(0)  ;
  
           }
-          
-          
-                  
-   
+ 
    
       /**
  * @dev to Empty the ElderVoteDetails after voting
