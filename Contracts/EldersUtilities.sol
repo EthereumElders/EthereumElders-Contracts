@@ -49,22 +49,14 @@ library EldersUtilities {
 
     function  DeleteValue(
         uint[] memory data,
-        uint value
+        uint value,
+        uint MaxRolesArrayLength
     ) internal pure returns(uint[] memory) {
-
+require (data.length <= MaxRolesArrayLength,"data.length has to be less than MaxRolesArrayLength ");
         return  removeByValue(data, value);
     }
 
-    function  UpdateValueByNew(
-        uint[] memory data,
-        uint oldValue,
-        uint newValue
-    ) internal pure returns(uint[] memory) {
-        uint i = find(data, oldValue);
-
-        data[i] = newValue;
-        return data;
-    }
+    
 
 
 
@@ -105,21 +97,12 @@ library EldersUtilities {
 
 
     function DeleteAddressValue(address[] memory data,
-        address value
+        address value,
+        uint MaxRolesArrayLength
     ) internal pure returns(address[] memory) {
-
+require (data.length <= MaxRolesArrayLength,"data.length has to be less than MaxRolesArrayLength ");
         return removeAddressByValue(data, value);
     }
-
-    function UpdateAddressValueByNew(address[] memory data,
-        address oldValue,
-        address newValue
-    ) internal pure returns(address[] memory) {
-        uint i = findAddress(data, oldValue);
-        data[i] = newValue;
-        return data;
-    }
-
  
 
 }
