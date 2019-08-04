@@ -5,6 +5,8 @@ pragma solidity ^ 0.5.1;
 @author  Elders Team
 @notice compatible with  v0.5.10 commit.5a6ea5b1 
 * @dev EldersRoles is a helper library for  adding or removing multi roles to accounts
+* first you have to SetMaxRolesArrayLength
+* then use setters and getters to add and remove or validate roles to user
 */
 
 import "./EldersUtilities.sol";
@@ -51,7 +53,7 @@ library EldersRoles {
      {
  
    uint[] memory  newRoles =role.AccountRoles[ _accountAddress];
-       role.AccountRoles[ _accountAddress]=   newRoles.DeleteValue(_role);
+       role.AccountRoles[ _accountAddress]=   newRoles.DeleteValue(_role,role.MaxRolesArrayLength);
           role.AccountRoles[ _accountAddress].length--;
            
     }
