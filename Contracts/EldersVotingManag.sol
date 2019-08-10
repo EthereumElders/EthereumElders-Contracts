@@ -315,5 +315,12 @@ contract EldersVotingManag {
         uint result = 100 * (_ElderVoteDetails.AgrredVoicesCount / _ElderVoteDetails.VotersCount);
         return result >= 50;
     }
+    function SetElderVoteDetails(address _ElderAddress, 
+        bool _isForAdd)
+    public
+    TempElderVoteIsEmpty()
+    SenderIsOwner(msg.sender) {
+        _ElderVoteDetails.SetElderVoteDetails(_ElderAddress,  _isForAdd);
+    }
     
 }
