@@ -25,7 +25,7 @@ contract EldersVotingManag {
      * @dev all elders count 
      * Increased or decreased according to the addition or deletion of each Elder
      */
-    uint private _eldersCount;
+    uint internal _eldersCount;
     /**
      * @dev minimum Elders Percentage for acceptable Voting 
      * Uint number from 1 to 100 to be  set in the constructor 
@@ -63,7 +63,7 @@ contract EldersVotingManag {
      * to be empty after voting is must
      */
     ContractsVoteDetailesLib.ContractVoteDetails internal _ContractVoteDetails;
-    EldersVoteDetailesLib.ElderVoteDetails private _ElderVoteDetails;
+    EldersVoteDetailesLib.ElderVoteDetails internal _ElderVoteDetails;
 
 
     //mappings
@@ -83,7 +83,7 @@ contract EldersVotingManag {
      * map the elder address account to true after voting on adding him is succeeded
      * map the elder address account to false after voting on removing him is succeeded
      */
-    mapping(address => bool) private Elders;
+    mapping(address => bool) internal Elders;
 
 
 
@@ -264,25 +264,7 @@ contract EldersVotingManag {
         return result >= 50;
     }
  
-    /**
-   
-       function SetElderVoteDetails( address  _elderAddress,
-        bool _isForAdd)
-        public 
-        TempElderVoteIsEmpty()
-        SenderIsOwner(msg.sender)
-        {
-        _ElderVoteDetails =ElderVoteDetails ( _elderAddress,
-           _isForAdd,0,0);
-    }
     
-     function AddNewElderVote(_elderAddress ,_isAgree);
- 
-      function SetElderVoteEndTimeSpan(_endVoteTimeSpan);
-     function GetElderVoteResult(_elderAddress,_isForAdd);
-     function AddNewElder(_elderAddress);
-     function GetEldersVoteDetails()
-     */
 
      function GetElderVoteDetails() public view returns(address,
         bool,
@@ -306,8 +288,8 @@ contract EldersVotingManag {
         _ElderVoteDetails.EmptyElderVoteDetails();
         SetElderVoteEndTimeSpan(0);
     }
-    
-    
+ 
+ 
     
     function GetElderVoteResult(address _ElderAddress) public view
    EldersVotersPersentageIsValid() ElderVoteTimeSpanIsValid() returns(bool _result) {
@@ -315,6 +297,8 @@ contract EldersVotingManag {
         uint result = 100 * (_ElderVoteDetails.AgrredVoicesCount / _ElderVoteDetails.VotersCount);
         return result >= 50;
     }
+    
+    
     function SetElderVoteDetails(address _ElderAddress, 
         bool _isForAdd)
     public
@@ -322,5 +306,4 @@ contract EldersVotingManag {
     SenderIsOwner(msg.sender) {
         _ElderVoteDetails.SetElderVoteDetails(_ElderAddress,  _isForAdd);
     }
-    
 }
