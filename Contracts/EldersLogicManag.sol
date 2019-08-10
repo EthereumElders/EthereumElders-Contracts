@@ -47,7 +47,11 @@ contract EldersLogicManag is EldersVotingManag
              
                _;
           }
- 
+    modifier  ElderVoteDetailsNotEmpty(){
+              require(_ElderVoteDetails.EldersForVoteAddress != address(0),"elder data not valid");
+             
+               _;
+          }
       function AddNewLogicContract(address _contractAddress) public AddressIsOwner(msg.sender) ContractVoteDetailsNotEmpty(){
          require(GetContractVoteResult( _contractAddress),"elders refused this contract");
          require( _ContractVoteDetails.IsForAdd,"voting is not for adding contract");
@@ -66,5 +70,19 @@ contract EldersLogicManag is EldersVotingManag
           return _allowedLogicContracts[_contractAddress]==_role ;
       }
       
-         
+          function AddNewElder(address _elderAddress) public AddressIsOwner(msg.sender) ElderVoteDetailsNotEmpty(){
+         require(GetElderVoteResult( _elderAddress),"elders refused this new elder");
+         require( _ElderVoteDetails.IsForAdd,"voting is not for adding elder");
+          Elders[ _elderAddress] = true;
+           EmptyElderVoteDetails();
+      } 
+      function RemoveExistedElder(address _elderAddress) public AddressIsOwner(msg.sender) ElderVoteDetailsNotEmpty(){
+         require(GetElderVoteResult( _elderAddress),"elders refused this new elder");
+         require( !_ElderVoteDetails.IsForAdd,"voting is not for removing elder");
+         require(_eldersCount>0,"elders count less than one");
+          require(Elders[ _elderAddress] ==true,"elder not exist");
+          Elders[ _elderAddress] =false;
+          _eldersCount --;
+           EmptyElderVoteDetails();
+      } 
 }
