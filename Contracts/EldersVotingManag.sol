@@ -13,12 +13,9 @@ import "./ContractsVoteDetailesLib.sol";
 import "./EldersVoteDetailesLib.sol";
 contract EldersVotingManag {
 
-    using EldersUtilities
-    for address[];
-    using ContractsVoteDetailesLib
-    for ContractsVoteDetailesLib.ContractVoteDetails;
-    using EldersVoteDetailesLib
-    for EldersVoteDetailesLib.ElderVoteDetails;
+    using EldersUtilities for address[];
+    using ContractsVoteDetailesLib for ContractsVoteDetailesLib.ContractVoteDetails;
+    using EldersVoteDetailesLib for EldersVoteDetailesLib.ElderVoteDetails;
     //parameters
     address private _owner;
     /**
@@ -44,14 +41,9 @@ contract EldersVotingManag {
     uint private _elderVoteTimeSpan;
 
 
-    constructor(
-
-    ) public {
-
+    constructor() public {
         _owner = msg.sender;
     }
-
-
 
     //events
 

@@ -11,9 +11,9 @@ pragma solidity ^ 0.5.1;
 
 library ContractsVoteDetailesLib {
 /**
- * @dev contracts vote details
- * @param  ContractAddress : is the contract address to vote on
- * @param  ContractRole : is the contract role as your logic Increased
+ *  @dev contracts vote details
+ *  @param  ContractAddress : is the contract address to vote on
+ *  @param  ContractRole : is the contract role as your logic Increased
  *  @param  IsForAdd : true if voting is for adding new contract
  *  @param  VotersCount : total count for all voters Increased according to each vote
  *  @param  AgrredVoicesCount : total count for all agreed  voices Increased according to each vote
