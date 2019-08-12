@@ -122,12 +122,12 @@ contract EldersVotingManag {
         require(TempElderVote[_elderAddress] == 0, "Elder Vote for this elder is Exist");
         _;
     }
-    
-    modifier ElderVoteDetailsIsValid(){
+
+    modifier ElderVoteDetailsIsValid() {
         require(_ElderVoteDetails.ElderVoteDetailsValid(), "elder data not valid");
         _;
     }
-    modifier ElderVoteTimeSpanIsValid(){
+    modifier ElderVoteTimeSpanIsValid() {
         require(_elderVoteTimeSpan > now, "Elder Vote TimeSpan Is not Valid");
         _;
     }
@@ -263,10 +263,10 @@ contract EldersVotingManag {
         uint result = 100 * (_ContractVoteDetails.AgrredVoicesCount / _ContractVoteDetails.VotersCount);
         return result >= 50;
     }
- 
-    
 
-     function GetElderVoteDetails() public view returns(address,
+
+
+    function GetElderVoteDetails() public view returns(address,
         bool,
         uint) {
         return _ElderVoteDetails.GetElderVoteDetails();
@@ -288,22 +288,22 @@ contract EldersVotingManag {
         _ElderVoteDetails.EmptyElderVoteDetails();
         SetElderVoteEndTimeSpan(0);
     }
- 
- 
-    
+
+
+
     function GetElderVoteResult(address _ElderAddress) public view
-   EldersVotersPersentageIsValid() ElderVoteTimeSpanIsValid() returns(bool _result) {
-        require(_ElderAddress ==  _ElderVoteDetails.EldersForVoteAddress, "Elder address not valid");
+    EldersVotersPersentageIsValid() ElderVoteTimeSpanIsValid() returns(bool _result) {
+        require(_ElderAddress == _ElderVoteDetails.EldersForVoteAddress, "Elder address not valid");
         uint result = 100 * (_ElderVoteDetails.AgrredVoicesCount / _ElderVoteDetails.VotersCount);
         return result >= 50;
     }
-    
-    
-    function SetElderVoteDetails(address _ElderAddress, 
+
+
+    function SetElderVoteDetails(address _ElderAddress,
         bool _isForAdd)
     public
     TempElderVoteIsEmpty()
     SenderIsOwner(msg.sender) {
-        _ElderVoteDetails.SetElderVoteDetails(_ElderAddress,  _isForAdd);
+        _ElderVoteDetails.SetElderVoteDetails(_ElderAddress, _isForAdd);
     }
 }
