@@ -1,8 +1,3 @@
- 
-// const mnemonic="pupil pepper unable urban miracle mail nasty future net drink wolf must";
- 
-
-
 const solcStable = {
   version: '0.5.1',
 };
@@ -29,8 +24,8 @@ module.exports = {
       gasPrice: 0x01,
     },
   },
-
   compilers: {
     solc: useSolcNightly ? solcNightly : solcStable,
   },
+  build: {},
 };
