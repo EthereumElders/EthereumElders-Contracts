@@ -26,7 +26,7 @@ import {EldersRoleUtilities} from "./utils.sol";
 
 /**
 * Ethereum Elders role management library supports 256 different roles to
-* provide governance over smart contracts
+* provide governance over smart contracts via a role based access control (RBAC)
 */
 library EldersRole{
 //  Error statements constant definition
@@ -37,7 +37,7 @@ library EldersRole{
     string public constant ERR_ACCOUNT_NOT_ALLOWED = "account does not have the role permission";
 
 
-    //    Role table structure definition
+    //  Role table structure definition
     struct RoleTable {
         //        Maps every address to role byte representation in the role table
         mapping (address => uint256) Role;
@@ -45,6 +45,7 @@ library EldersRole{
         uint8 MaximumRoles;
     }
 
+    //  Event to declare the change of role per account
     event Role (address, uint256);
 
     /**
@@ -61,7 +62,8 @@ library EldersRole{
     * @param role uint256 - the role in the bytes representation
     */
     function SetRole (RoleTable storage self, address account, uint256 role) internal {
-        require(role < EldersRoleUtilities.RoleNumberToBytes(self.MaximumRoles) || self.MaximumRoles == 0xFF, ERR_ROLE_OUT_OF_LIMIT);
+        require(role < EldersRoleUtilities.RoleNumberToBytes(self.MaximumRoles + 1) || self.MaximumRoles == 0xFF,
+            ERR_ROLE_OUT_OF_LIMIT);
         self.Role[account] = role;
         emit Role(account, role);
     }
@@ -72,9 +74,9 @@ library EldersRole{
     * @param roleNumber uint8 - the role number ranging 0:255
     */
     function AddRole (RoleTable storage self, address account, uint8 roleNumber) internal {
-        uint256 roleBytes = EldersRoleUtilities.RoleNumberToBytes(self.MaximumRoles);
-        require(roleNumber < roleBytes || self.MaximumRoles == 0xFF, ERR_ROLE_OUT_OF_LIMIT);
-        self.Role[account] = self.Role[account] | roleBytes;
+        require(roleNumber <= self.MaximumRoles, ERR_ROLE_OUT_OF_LIMIT);
+        self.Role[account] = EldersRoleUtilities.AddToRole(self.Role[account], roleNumber);
+        emit Role (account, self.Role[account]);
     }
 
     /**
@@ -83,10 +85,9 @@ library EldersRole{
     * @param roleNumber uint8 - the role number ranging 0:255
     */
     function RemoveRole (RoleTable storage self, address account, uint8 roleNumber) internal {
-        uint256 roleBytes = EldersRoleUtilities.RoleNumberToBytes(self.MaximumRoles);
-        require(roleNumber < roleBytes || self.MaximumRoles == 0xFF, ERR_ROLE_OUT_OF_LIMIT);
-        self.Role[account] = self.Role[account] ^ roleBytes;
-        emit Role (account, roleBytes);
+        require(roleNumber <= self.MaximumRoles, ERR_ROLE_OUT_OF_LIMIT);
+        self.Role[account] = EldersRoleUtilities.RemoveFromRole(self.Role[account], roleNumber);
+        emit Role (account, self.Role[account]);
     }
 
     /**
@@ -95,6 +96,6 @@ library EldersRole{
     * @param roleNumber uint8 - the role number ranging 0:255
     */
     function RoleExists (RoleTable storage self, address account, uint8 roleNumber) view internal returns (bool) {
-        return ( self.Role[account] | EldersRoleUtilities.RoleNumberToBytes(roleNumber) ) > 0;
+        return EldersRoleUtilities.RoleExists(self.Role[account], roleNumber);
     }
 }

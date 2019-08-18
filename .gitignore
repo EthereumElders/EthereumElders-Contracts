@@ -1,8 +1,8 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿# Project build directory
+build
 
-/.vs/VSWorkspaceState.json
+# Visual Studio
+.vs
 
 # IntelliJ IDEs
 .idea

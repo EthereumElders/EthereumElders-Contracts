@@ -25,13 +25,37 @@ pragma solidity ^0.5.1;
 import "truffle/Assert.sol";
 import {EldersRole} from "../../contracts/rolebased/librole.sol";
 
-contract TestLibRole {
+contract TestLibEldersRole {
     using EldersRole for EldersRole.RoleTable;
     EldersRole.RoleTable Table;
 
-    function testAddToRole () public {
+    function testAddRole () public {
         Table.SetMaximumRoles(0x2);
         Table.AddRole(address (0x00), 0x1);
+        Table.AddRole(address (0x01), 0x1);
         Assert.isTrue(Table.RoleExists(address(0x00), 0x01), "Role should exist");
+        Assert.isTrue(Table.RoleExists(address(0x01), 0x01), "Role should exist");
     }
+
+    function testSetRole () public {
+        Table.SetMaximumRoles(0x2);
+        Table.SetRole(address(0x00), 0x01);
+        Table.SetRole(address(0x01), 0x01);
+        Assert.isTrue(Table.RoleExists(address(0x00), 0x00), "Role should exist");
+        Assert.isTrue(Table.RoleExists(address(0x01), 0x00), "Role should exist");
+    }
+
+    function testRemoveRole () public {
+        Table.SetMaximumRoles(0x3);
+        Table.SetRole(address(0x00), 0x03);
+        Table.SetRole(address(0x01), 0x07);
+        Table.RemoveRole(address(0x00), 0x00);
+        Table.RemoveRole(address(0x01), 0x03);
+        Assert.isTrue(!Table.RoleExists(address(0x00), 0x00), "Role should not exist");
+        Assert.isTrue(!Table.RoleExists(address(0x01), 0x03), "Role should not exist");
+        Assert.isTrue(Table.RoleExists(address(0x01), 0x00), "Role should exist");
+    }
+
+//    NOTE: Unable to test the maximum role assertion in solidity, because no catch mechanism, an overall behaviour test
+//    in javascript should cover this part
 }

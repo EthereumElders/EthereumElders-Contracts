@@ -22,23 +22,44 @@
 
 pragma solidity ^0.5.1;
 
+
+/**
+* Utility library that provides utility functions that works interchangeably with lib EldersRole
+*/
 library EldersRoleUtilities {
     /**
     * Converts a role number ranging from 0:255 to a uint256 format into a
     * role representation in 256 bit format i.e. true (1) in the role-th bit
-    * @param role uint8 - role as a number
+    * @param roleNumber uint8 - role as a number
     */
-    function RoleNumberToBytes(uint8 role) pure internal returns (uint256) {
-        return (0x01 << uint256(role));
+    function RoleNumberToBytes(uint8 roleNumber) pure internal returns (uint256) {
+        return (0x01 << uint256(roleNumber));
     }
 
     /**
-    * Concatenates a role to a given role format, intended to be used with combination to
-    * SetRole, for multi-role initializations
+    * Checks if role number exists in a role byte format
+    * @param role uint256 - role permissions in byte format
+    * @param roleNumber uint8 - role as a number
+    */
+    function RoleExists (uint256 role, uint8 roleNumber) pure internal returns(bool) {
+        return ( role & RoleNumberToBytes(roleNumber) ) > 0;
+    }
+
+    /**
+    * Concatenates a role to a given role format
     * @param role uint256 - role 256 bits format
     * @param roleNumber uint8 - role number ranging from 0:255
     */
     function AddToRole (uint256 role, uint8 roleNumber) pure internal returns (uint256) {
         return role | RoleNumberToBytes(roleNumber);
+    }
+
+    /**
+    * Removes a role number from a given role format
+    * @param role uint256 - role 256 bits format
+    * @param roleNumber uint8 - role number ranging from 0:255
+    */
+    function RemoveFromRole (uint256 role, uint8 roleNumber) pure internal returns (uint256) {
+        return role & (~ RoleNumberToBytes(roleNumber));
     }
 }
