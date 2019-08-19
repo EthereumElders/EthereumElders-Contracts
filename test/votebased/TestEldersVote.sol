@@ -43,5 +43,9 @@ contract TestEldersVote {
         Assert.equal(Table.getVotes('vote1'), 0x02, 'must equal to two votes');
     }
 
+    function testNoVoteForOperation () public {
+        Assert.equal(Table.getVotes('novote'), 0x00, 'must be zero to ensure no vote existing');
+    }
+
 
 }

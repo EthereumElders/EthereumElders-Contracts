@@ -31,6 +31,7 @@ library EldersVote {
     string public constant ERR_CURRENT_VOTE_EXISTS = 'a current vote exists';
     string public constant ERR_EMPTY_VOTE = 'vote does not exist';
     string public constant ERR_ALREADY_VOTED = 'address already voted';
+    string public constant ERR_VOTES_MORE_THAN_ONE = 'votes need to be more than one';
     string public constant ERR_VOTE_IS_OVER = 'votes needed reached';
 
     // Structure for calculating votes for a specific operation, should not be used explicitly internal use only for
@@ -64,6 +65,7 @@ library EldersVote {
         address account ) internal {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
+        require(votesNeeded > 0x01, ERR_VOTES_MORE_THAN_ONE);
         self.Operation[voteSignature].Votes = 0x01;
         self.Operation[voteSignature].VotesNeeded = votesNeeded;
         self.Operation[voteSignature].Voters[account] = true;
