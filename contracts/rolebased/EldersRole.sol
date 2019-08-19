@@ -69,6 +69,14 @@ library EldersRole{
     }
 
     /**
+    * Gets formatted uint256 role to a specific account address in the role table
+    * @param account address - the address of the account
+    */
+    function GetRole (RoleTable storage self, address account) view internal returns (uint256) {
+        return self.Role[account];
+    }
+
+    /**
     * Adds a role number to a specific account address in the role table
     * @param account address - the address of the account
     * @param roleNumber uint8 - the role number ranging 0:255

@@ -45,6 +45,12 @@ contract TestEldersRole {
         Assert.isTrue(Table.RoleExists(address(0x01), 0x00), "Role should exist");
     }
 
+    function testGetRole() public {
+        Table.SetMaximumRoles(0xFF);
+        Table.SetRole(address (0x00), ~ uint256(0x00));
+        Assert.equal(Table.GetRole(address(0x00)), ~uint256(0x00), "should equal this value");
+    }
+
     function testRemoveRole () public {
         Table.SetMaximumRoles(0x3);
         Table.SetRole(address(0x00), 0x03);

@@ -30,27 +30,34 @@ contract TestEldersVote {
     EldersVote.OperationsTable Table;
 
     function testCreateVote() public {
-        Table.createVote(string('vote1signature'), uint256(0x05) ,address (0x00));
-        Assert.equal(Table.getVotes('vote1signature'), 0x1, 'must equal to initial voting value one');
-        Assert.equal(Table.getVotesNeeded('vote1signature'), 0x05, 'must equal to 5 needed votes');
-        Assert.equal(Table.getOperations().length, 0x01, 'must be one item in the discovery');
-        Assert.equal(Table.getOperations()[0], string ('vote1signature'), 'must match the unique key string');
+        Table.CreateVote(string("vote1signature"), uint256(0x05) ,address (0x00));
+        Assert.equal(Table.GetVotes("vote1signature"), 0x1, "must equal to initial voting value one");
+        Assert.equal(Table.GetVotesNeeded("vote1signature"), 0x05, "must equal to 5 needed votes");
+        Assert.equal(Table.GetOperations().length, 0x01, "must be one item in the discovery");
+        Assert.equal(Table.GetOperations()[0], string ("vote1signature"), "must match the unique key string");
     }
 
     function testUpVote() public {
-        Table.createVote(string('vote1'), uint(0x05), address (0x01));
-        Table.upVote(string('vote1'), address (0x00));
-        Assert.equal(Table.getVotes('vote1'), 0x02, 'must equal to two votes');
+        Table.CreateVote(string("vote1"), uint(0x05), address (0x01));
+        Table.UpVote(string("vote1"), address (0x00));
+        Assert.equal(Table.GetVotes("vote1"), 0x02, "must equal to two votes");
     }
 
     function testHasVoted() public {
-        Table.createVote(string('vote2'), uint(0x02), address (0x01));
-        Assert.isTrue(Table.hasVoted(string('vote2'), address (0x01)), 'must be true for address 0x01');
-        Assert.isTrue(!Table.hasVoted(string('vote2'), address (0x02)), 'must be false for address 0x02');
+        Table.CreateVote(string("vote2"), uint(0x02), address (0x01));
+        Assert.isTrue(Table.HasVoted(string("vote2"), address (0x01)), "must be true for address 0x01");
+        Assert.isTrue(!Table.HasVoted(string("vote2"), address (0x02)), "must be false for address 0x02");
+    }
+
+    function testIsSuccessful() public {
+        Table.CreateVote(string ("vote3"), uint (0x02), address (0x01));
+        Assert.isTrue(!Table.IsSuccessful("vote3"), "must be false");
+        Table.UpVote('vote3', address (0x02));
+        Assert.isTrue(Table.IsSuccessful("vote3"), "must be true");
     }
 
     function testNoVoteForOperation () public {
-        Assert.equal(Table.getVotes(string('novote')), 0x00, 'must be zero to ensure no vote existing');
+        Assert.equal(Table.GetVotes(string("novote")), 0x00, "must be zero to ensure no vote existing");
     }
 
 
