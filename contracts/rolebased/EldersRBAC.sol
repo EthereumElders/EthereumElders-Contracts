@@ -22,7 +22,7 @@
 
 pragma solidity ^0.5.1;
 
-import {EldersRole} from "../rolebased/EldersRole.sol";
+import {EldersRole} from "./EldersRole.sol";
 
 /**
 * Role Based Access Control contract with Ethereum Elders implementation
