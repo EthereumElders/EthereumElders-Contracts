@@ -24,18 +24,19 @@ pragma solidity ^0.5.1;
 
 /**
 * Library for vote management for operations
+* Operations are designated by unique string signatures that should be handled by the library user
 */
 library EldersVote {
 // Error statements
     string public constant ERR_CURRENT_VOTE_EXISTS = 'a current vote exists';
     string public constant ERR_EMPTY_VOTE = 'vote does not exist';
-
+    string public constant ERR_ALREADY_VOTED = 'address already voted';
 
     // Structure for calculating votes for a specific operation, should not be used explicitly internal use only for
     // the library.
     struct VoteTable {
         // Addresses that already provided a vote
-        address[] Voters;
+        mapping (address => bool) Voters;
         // Current votes
         uint256 Votes;
         // Required votes for operation to be executed
@@ -51,31 +52,47 @@ library EldersVote {
         // vote discovery array
         string[] PendingOperations;
     }
-
+    /**
+    * Create a new vote for a given signature with required needed votes
+    * @param voteSignature string - the unique string signature for operation key
+    * @param votesNeeded uint256 - the number of required votes for this operation
+    */
     function createVote(OperationsTable storage self, string voteSignature, uint256 votesNeeded) {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
         self.Operation[voteSignature] = VoteTable(
             {
-                Voters: [msg.sender],
                 Votes: uint256(0x01),
                 VotesNeeded: votesNeeded,
                 Index: OperationsTable.PendingOperations.length
             }
         );
+        self.Operation[voteSignature].Votes(msg.sender) = true;
         self.PendingOperations[OperationsTable.PendingOperations.length] = voteSignature;
     }
 
+    /**
+    * Upvotes a pending operation
+    * @param voteSignature string - the unique string signature for operation key
+    */
     function upVote(OperationsTable storage self, string voteSignature) internal {
-        require(OperationsTable.Operation[voteSignature].Voters.length > 0, ERR_EMPTY_VOTE);
-        self.Operation[voteSignature].Voters.push(msg.sender);
+        require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
+        require(self.Operation[voteSignature].Voters[msg.sender] == false, ERR_ALREADY_VOTED);
+        self.Operation[voteSignature].Voters[msg.sender] = true;
         self.Operation[voteSignature].Votes++;
     }
-
+    /**
+    * Returns current vote count for a given operation
+    * @param voteSignature string - the unique string signature for operation key
+    */
     function getVotes(OperationsTable storage self, string voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].Votes;
     }
 
+    /**
+    * Returns the votes needed for a given operation
+    * @param voteSignature string - the unique string signature for operation key
+    */
     function getVotesNeeded(OperationsTable storage self, string voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].VotesNeeded;
     }
