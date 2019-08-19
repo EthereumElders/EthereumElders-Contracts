@@ -10,6 +10,8 @@ const solcNightly = {
 const useSolcNightly = process.env.SOLC_NIGHTLY === 'false';
 
 module.exports = {
+  // Temporary until the project is more mature
+  contracts_directory: './contracts/rolebased',
   networks: {
     development: {
       port: 7545,
