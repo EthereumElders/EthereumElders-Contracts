@@ -38,19 +38,19 @@ contract EldersRBAC {
 
 
 
-    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) {
+    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) public {
         roleTable.SetMaximumRoles (_maximumRoleNumber);
         masterRole = _masterRole;
         _setRole(msg.sender, masterRole);
     }
 
     modifier onlyRoleNumber (uint8 roleNumber) {
-        require(roleTable.RoleExists(msg.sender, roleNumber), EldersRole.ERR_ACCOUNT_NOT_ALLOWED);
+        require(roleTable.RoleExists(msg.sender, roleNumber), "account does not have the role permission");
         _;
     }
 
     modifier onlyRole (uint256 role) {
-        require(roleTable.GetRole(account) == role, EldersRole.ERR_ACCOUNT_NOT_ALLOWED);
+        require(roleTable.GetRole(msg.sender) == role, "account does not have the role permission");
         _;
     }
 
@@ -101,6 +101,4 @@ contract EldersRBAC {
     function roleExists (address account, uint8 roleNumber) view public returns (bool) {
         _roleExists(account, roleNumber);
     }
-
-
 }
