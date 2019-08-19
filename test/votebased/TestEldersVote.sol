@@ -43,8 +43,14 @@ contract TestEldersVote {
         Assert.equal(Table.getVotes('vote1'), 0x02, 'must equal to two votes');
     }
 
+    function testHasVoted() public {
+        Table.createVote(string('vote2'), uint(0x02), address (0x01));
+        Assert.isTrue(Table.hasVoted(string('vote2'), address (0x01)), 'must be true for address 0x01');
+        Assert.isTrue(!Table.hasVoted(string('vote2'), address (0x02)), 'must be false for address 0x02');
+    }
+
     function testNoVoteForOperation () public {
-        Assert.equal(Table.getVotes('novote'), 0x00, 'must be zero to ensure no vote existing');
+        Assert.equal(Table.getVotes(string('novote')), 0x00, 'must be zero to ensure no vote existing');
     }
 
 

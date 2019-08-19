@@ -84,6 +84,17 @@ library EldersVote {
         self.Operation[voteSignature].Voters[account] = true;
         self.Operation[voteSignature].Votes++;
     }
+
+    /**
+    * Returns current voters addresses for a given operation
+    * @param voteSignature string - the unique string signature for operation key
+    * @param account address - the address to check if voted
+    */
+    function hasVoted (OperationsTable storage self, string memory voteSignature, address account) view internal
+        returns (bool) {
+        return self.Operation[voteSignature].Voters[account];
+    }
+
     /**
     * Returns current vote count for a given operation
     * @param voteSignature string - the unique string signature for operation key
