@@ -25,7 +25,7 @@ pragma solidity ^0.5.1;
 import "truffle/Assert.sol";
 import {EldersRole} from "../../contracts/rolebased/EldersRole.sol";
 
-contract TestLibEldersRole {
+contract TestEldersRole {
     using EldersRole for EldersRole.RoleTable;
     EldersRole.RoleTable Table;
 

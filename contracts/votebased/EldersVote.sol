@@ -31,6 +31,7 @@ library EldersVote {
     string public constant ERR_CURRENT_VOTE_EXISTS = 'a current vote exists';
     string public constant ERR_EMPTY_VOTE = 'vote does not exist';
     string public constant ERR_ALREADY_VOTED = 'address already voted';
+    string public constant ERR_VOTE_IS_OVER = 'votes needed reached';
 
     // Structure for calculating votes for a specific operation, should not be used explicitly internal use only for
     // the library.
@@ -50,35 +51,35 @@ library EldersVote {
         // map to track votes
         mapping (string => VoteTable) Operation;
         // vote discovery array
-        string[] PendingOperations;
+        string[] Operations;
     }
+
     /**
     * Create a new vote for a given signature with required needed votes
     * @param voteSignature string - the unique string signature for operation key
     * @param votesNeeded uint256 - the number of required votes for this operation
+    * @param account address - the address of the account creating the vote
     */
-    function createVote(OperationsTable storage self, string memory voteSignature, uint256 votesNeeded) internal {
+    function createVote(OperationsTable storage self, string memory voteSignature, uint256 votesNeeded,
+        address account ) internal {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
-        self.Operation[voteSignature] = VoteTable(
-            {
-                Votes: uint256(0x01),
-                VotesNeeded: votesNeeded,
-                Index: self.PendingOperations.length
-            }
-        );
-        self.Operation[voteSignature].Voters[msg.sender] = true;
-        self.PendingOperations[self.PendingOperations.length] = voteSignature;
+        self.Operation[voteSignature].Votes = 0x01;
+        self.Operation[voteSignature].VotesNeeded = votesNeeded;
+        self.Operation[voteSignature].Voters[account] = true;
+        self.Operation[voteSignature].Index = self.Operations.length;
+        self.Operations.push(voteSignature);
     }
 
     /**
     * Upvotes a pending operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function upVote(OperationsTable storage self, string memory voteSignature) internal {
+    function upVote(OperationsTable storage self, string memory voteSignature, address account) internal {
         require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
-        require(self.Operation[voteSignature].Voters[msg.sender] == false, ERR_ALREADY_VOTED);
-        self.Operation[voteSignature].Voters[msg.sender] = true;
+        require(self.Operation[voteSignature].Voters[account] == false, ERR_ALREADY_VOTED);
+        require(self.Operation[voteSignature].VotesNeeded >= self.Operation[voteSignature].Votes, ERR_VOTE_IS_OVER);
+        self.Operation[voteSignature].Voters[account] = true;
         self.Operation[voteSignature].Votes++;
     }
     /**
@@ -97,19 +98,10 @@ library EldersVote {
         return self.Operation[voteSignature].VotesNeeded;
     }
 
-    function resetVote(OperationsTable storage self, string memory voteSignature) internal {
-        require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
-        // Fetch the last operation to replace the to be deleted operation
-        self.PendingOperations[
-            self.Operation[voteSignature].Index
-        ] = self.PendingOperations[self.PendingOperations.length];
-        // Change the displaced operation index
-        self.Operation[
-            self.PendingOperations[self.Operation[voteSignature].Index]
-        ].Index = self.Operation[voteSignature].Index;
-        // Delete the last element
-        delete (self.PendingOperations[self.PendingOperations.length]);
-        // Delete the vote
-        delete(self.Operation[voteSignature]);
+    /**
+    * Returns the current operations
+    */
+    function getOperations (OperationsTable storage self) view internal returns ( string [] memory ) {
+        return self.Operations;
     }
 }
