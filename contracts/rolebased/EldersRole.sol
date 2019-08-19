@@ -22,7 +22,7 @@
 
 pragma solidity ^0.5.1;
 
-import {EldersRoleUtilities} from "./utils.sol";
+import {EldersRoleUtilities} from "./EldersRoleUtilities.sol";
 
 /**
 * Ethereum Elders role management library supports 256 different roles to

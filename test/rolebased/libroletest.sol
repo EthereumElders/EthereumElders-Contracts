@@ -23,7 +23,7 @@
 pragma solidity ^0.5.1;
 
 import "truffle/Assert.sol";
-import {EldersRole} from "../../contracts/rolebased/librole.sol";
+import {EldersRole} from "../../contracts/rolebased/EldersRole.sol";
 
 contract TestLibEldersRole {
     using EldersRole for EldersRole.RoleTable;

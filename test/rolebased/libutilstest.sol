@@ -21,7 +21,7 @@
  */
 
 import "truffle/Assert.sol";
-import {EldersRoleUtilities} from "../../contracts/rolebased/utils.sol";
+import {EldersRoleUtilities} from "../../contracts/rolebased/EldersRoleUtilities.sol";
 
 pragma solidity ^0.5.1;
 

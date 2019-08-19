@@ -57,25 +57,25 @@ library EldersVote {
     * @param voteSignature string - the unique string signature for operation key
     * @param votesNeeded uint256 - the number of required votes for this operation
     */
-    function createVote(OperationsTable storage self, string voteSignature, uint256 votesNeeded) {
+    function createVote(OperationsTable storage self, string memory voteSignature, uint256 votesNeeded) internal {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
         self.Operation[voteSignature] = VoteTable(
             {
                 Votes: uint256(0x01),
                 VotesNeeded: votesNeeded,
-                Index: OperationsTable.PendingOperations.length
+                Index: self.PendingOperations.length
             }
         );
-        self.Operation[voteSignature].Votes(msg.sender) = true;
-        self.PendingOperations[OperationsTable.PendingOperations.length] = voteSignature;
+        self.Operation[voteSignature].Voters[msg.sender] = true;
+        self.PendingOperations[self.PendingOperations.length] = voteSignature;
     }
 
     /**
     * Upvotes a pending operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function upVote(OperationsTable storage self, string voteSignature) internal {
+    function upVote(OperationsTable storage self, string memory voteSignature) internal {
         require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
         require(self.Operation[voteSignature].Voters[msg.sender] == false, ERR_ALREADY_VOTED);
         self.Operation[voteSignature].Voters[msg.sender] = true;
@@ -85,7 +85,7 @@ library EldersVote {
     * Returns current vote count for a given operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function getVotes(OperationsTable storage self, string voteSignature) view internal returns (uint256) {
+    function getVotes(OperationsTable storage self, string memory voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].Votes;
     }
 
@@ -93,22 +93,22 @@ library EldersVote {
     * Returns the votes needed for a given operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function getVotesNeeded(OperationsTable storage self, string voteSignature) view internal returns (uint256) {
+    function getVotesNeeded(OperationsTable storage self, string memory voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].VotesNeeded;
     }
 
-    function resetVote(OperationsTable storage self, string voteSignature) internal {
-        require(self.Operation[voteSignature].Voters.length > 0, ERR_EMPTY_VOTE);
+    function resetVote(OperationsTable storage self, string memory voteSignature) internal {
+        require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
         // Fetch the last operation to replace the to be deleted operation
         self.PendingOperations[
             self.Operation[voteSignature].Index
-        ] = self.PendingOperations[OperationsTable.PendingOperations.length];
+        ] = self.PendingOperations[self.PendingOperations.length];
         // Change the displaced operation index
         self.Operation[
-            self.PendingOperations[OperationsTable.Operation[voteSignature].Index]
+            self.PendingOperations[self.Operation[voteSignature].Index]
         ].Index = self.Operation[voteSignature].Index;
         // Delete the last element
-        delete (self.PendingOperations[OperationsTable.PendingOperations.length]);
+        delete (self.PendingOperations[self.PendingOperations.length]);
         // Delete the vote
         delete(self.Operation[voteSignature]);
     }
