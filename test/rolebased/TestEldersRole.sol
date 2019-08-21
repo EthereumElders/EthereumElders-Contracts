@@ -23,9 +23,9 @@
 pragma solidity ^0.5.1;
 
 import "truffle/Assert.sol";
-import {EldersRole} from "../../contracts/rolebased/librole.sol";
+import {EldersRole} from "../../contracts/rolebased/EldersRole.sol";
 
-contract TestLibEldersRole {
+contract TestEldersRole {
     using EldersRole for EldersRole.RoleTable;
     EldersRole.RoleTable Table;
 
@@ -43,6 +43,12 @@ contract TestLibEldersRole {
         Table.SetRole(address(0x01), 0x01);
         Assert.isTrue(Table.RoleExists(address(0x00), 0x00), "Role should exist");
         Assert.isTrue(Table.RoleExists(address(0x01), 0x00), "Role should exist");
+    }
+
+    function testGetRole() public {
+        Table.SetMaximumRoles(0xFF);
+        Table.SetRole(address (0x00), ~ uint256(0x00));
+        Assert.equal(Table.GetRole(address(0x00)), ~uint256(0x00), "should equal this value");
     }
 
     function testRemoveRole () public {

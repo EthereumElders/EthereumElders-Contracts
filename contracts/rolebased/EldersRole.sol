@@ -22,7 +22,7 @@
 
 pragma solidity ^0.5.1;
 
-import {EldersRoleUtilities} from "./utils.sol";
+import {EldersRoleUtilities} from "./EldersRoleUtilities.sol";
 
 /**
 * Ethereum Elders role management library supports 256 different roles to
@@ -66,6 +66,14 @@ library EldersRole{
             ERR_ROLE_OUT_OF_LIMIT);
         self.Role[account] = role;
         emit Role(account, role);
+    }
+
+    /**
+    * Gets formatted uint256 role to a specific account address in the role table
+    * @param account address - the address of the account
+    */
+    function GetRole (RoleTable storage self, address account) view internal returns (uint256) {
+        return self.Role[account];
     }
 
     /**
