@@ -33,12 +33,7 @@ contract EldersRBAC {
     // Holds the RBAC attributes
     EldersRole.RoleTable roleTable;
 
-    // The master role combination
-    uint256 masterRole;
-
-
-
-    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) public {
+    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) {
         roleTable.SetMaximumRoles (_maximumRoleNumber);
         masterRole = _masterRole;
         _setRole(msg.sender, masterRole);
@@ -78,24 +73,8 @@ contract EldersRBAC {
         return roleTable.RoleExists(account, roleNumber);
     }
 
-    function addRole (address account, uint8 roleNumber) public onlyRole(masterRole) {
-        _addRole(account, roleNumber);
-    }
-
     function getRole (address account) view public returns (uint256) {
         return _getRole(account);
-    }
-
-    function setRole (address account, uint256 role) public onlyRole(masterRole) {
-        _setRole(account, role);
-    }
-
-    function setMaximumRoleNumber (uint8 roleNumber) public onlyRole(masterRole) {
-        _setMaximumRoleNumber(roleNumber);
-    }
-
-    function removeRole (address account, uint8 roleNumber) public onlyRole(masterRole) {
-        _removeRole(account, roleNumber);
     }
 
     function roleExists (address account, uint8 roleNumber) view public returns (bool) {

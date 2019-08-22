@@ -60,11 +60,11 @@ library EldersVote {
 
     /**
     * Create a new vote for a given signature with required needed votes
-    * @param voteSignature string - the unique string signature for operation key
+    * @param voteSignature bytes32 - the unique string signature for operation key
     * @param votesNeeded uint256 - the number of required votes for this operation
     * @param account address - the address of the account creating the vote
     */
-    function CreateVote(OperationsTable storage self, bytes32 voteSignature, uint256 votesNeeded,
+    function createVote(OperationsTable storage self, bytes32 voteSignature, uint256 votesNeeded,
         address account ) internal {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
@@ -79,9 +79,9 @@ library EldersVote {
 
     /**
     * Upvotes a pending operation
-    * @param voteSignature string - the unique string signature for operation key
+    * @param voteSignature bytes32 - the unique string signature for operation key
     */
-    function UpVote(OperationsTable storage self, bytes32 voteSignature, address account) internal {
+    function upVote(OperationsTable storage self, bytes32 voteSignature, address account) internal {
         require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
         require(self.Operation[voteSignature].Voters[account] == false, ERR_ALREADY_VOTED);
         require(self.Operation[voteSignature].VotesNeeded >= self.Operation[voteSignature].Votes, ERR_VOTE_IS_OVER);
@@ -90,40 +90,40 @@ library EldersVote {
         emit Vote(voteSignature, self.Operation[voteSignature].Votes, self.Operation[voteSignature].VotesNeeded);
     }
 
-    function IsSuccessful(OperationsTable storage self, bytes32 voteSignature) view internal returns (bool) {
+    function isSuccessful(OperationsTable storage self, bytes32 voteSignature) view internal returns (bool) {
         return self.Operation[voteSignature].Votes >= self.Operation[voteSignature].VotesNeeded;
     }
 
     /**
     * Returns current voters addresses for a given operation
-    * @param voteSignature string - the unique string signature for operation key
+    * @param voteSignature bytes32 - the unique string signature for operation key
     * @param account address - the address to check if voted
     */
-    function HasVoted(OperationsTable storage self, bytes32 voteSignature, address account) view internal
+    function hasVoted(OperationsTable storage self, bytes32 voteSignature, address account) view internal
         returns (bool) {
         return self.Operation[voteSignature].Voters[account];
     }
 
     /**
     * Returns current vote count for a given operation
-    * @param voteSignature string - the unique string signature for operation key
+    * @param voteSignature bytes32 - the unique string signature for operation key
     */
-    function GetVotes(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
+    function getVotes(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].Votes;
     }
 
     /**
     * Returns the votes needed for a given operation
-    * @param voteSignature string - the unique string signature for operation key
+    * @param voteSignature bytes32 - the unique string signature for operation key
     */
-    function GetVotesNeeded(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
+    function getVotesNeeded(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].VotesNeeded;
     }
 
     /**
     * Returns the current operations
     */
-    function GetOperations(OperationsTable storage self) view internal returns ( bytes32 [] memory ) {
+    function getOperations(OperationsTable storage self) view internal returns ( bytes32 [] memory ) {
         return self.Operations;
     }
 }
