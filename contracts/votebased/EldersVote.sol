@@ -50,13 +50,13 @@ library EldersVote {
     // Operations table to track current votes, with vote discovery
     struct OperationsTable {
         // map to track votes
-        mapping (string => VoteTable) Operation;
+        mapping (bytes32 => VoteTable) Operation;
         // vote discovery array
-        string[] Operations;
+        bytes32[] Operations;
     }
 
     // Events for operations vote
-    event Vote (string, uint256, uint256);
+    event Vote (bytes32, uint256, uint256);
 
     /**
     * Create a new vote for a given signature with required needed votes
@@ -64,7 +64,7 @@ library EldersVote {
     * @param votesNeeded uint256 - the number of required votes for this operation
     * @param account address - the address of the account creating the vote
     */
-    function CreateVote(OperationsTable storage self, string memory voteSignature, uint256 votesNeeded,
+    function CreateVote(OperationsTable storage self, bytes32 voteSignature, uint256 votesNeeded,
         address account ) internal {
         require(self.Operation[voteSignature].Votes == 0 &&
             self.Operation[voteSignature].VotesNeeded == 0, ERR_CURRENT_VOTE_EXISTS);
@@ -81,7 +81,7 @@ library EldersVote {
     * Upvotes a pending operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function UpVote(OperationsTable storage self, string memory voteSignature, address account) internal {
+    function UpVote(OperationsTable storage self, bytes32 voteSignature, address account) internal {
         require(self.Operation[voteSignature].Votes > 0, ERR_EMPTY_VOTE);
         require(self.Operation[voteSignature].Voters[account] == false, ERR_ALREADY_VOTED);
         require(self.Operation[voteSignature].VotesNeeded >= self.Operation[voteSignature].Votes, ERR_VOTE_IS_OVER);
@@ -90,7 +90,7 @@ library EldersVote {
         emit Vote(voteSignature, self.Operation[voteSignature].Votes, self.Operation[voteSignature].VotesNeeded);
     }
 
-    function IsSuccessful(OperationsTable storage self, string memory voteSignature) view internal returns (bool) {
+    function IsSuccessful(OperationsTable storage self, bytes32 voteSignature) view internal returns (bool) {
         return self.Operation[voteSignature].Votes >= self.Operation[voteSignature].VotesNeeded;
     }
 
@@ -99,7 +99,7 @@ library EldersVote {
     * @param voteSignature string - the unique string signature for operation key
     * @param account address - the address to check if voted
     */
-    function HasVoted(OperationsTable storage self, string memory voteSignature, address account) view internal
+    function HasVoted(OperationsTable storage self, bytes32 voteSignature, address account) view internal
         returns (bool) {
         return self.Operation[voteSignature].Voters[account];
     }
@@ -108,7 +108,7 @@ library EldersVote {
     * Returns current vote count for a given operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function GetVotes(OperationsTable storage self, string memory voteSignature) view internal returns (uint256) {
+    function GetVotes(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].Votes;
     }
 
@@ -116,14 +116,14 @@ library EldersVote {
     * Returns the votes needed for a given operation
     * @param voteSignature string - the unique string signature for operation key
     */
-    function GetVotesNeeded(OperationsTable storage self, string memory voteSignature) view internal returns (uint256) {
+    function GetVotesNeeded(OperationsTable storage self, bytes32 voteSignature) view internal returns (uint256) {
         return self.Operation[voteSignature].VotesNeeded;
     }
 
     /**
     * Returns the current operations
     */
-    function GetOperations(OperationsTable storage self) view internal returns ( string [] memory ) {
+    function GetOperations(OperationsTable storage self) view internal returns ( bytes32 [] memory ) {
         return self.Operations;
     }
 }

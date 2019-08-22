@@ -12,7 +12,7 @@ const useSolcNightly = process.env.SOLC_NIGHTLY === 'false';
 module.exports = {
   networks: {
     development: {
-      port: 7545,
+      port: 8545,
      host: '127.0.0.1',
       network_id: '*', // eslint-disable-line camelcase
     },
