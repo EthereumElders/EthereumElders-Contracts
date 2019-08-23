@@ -44,17 +44,15 @@ contract Voteable {
     constructor() internal {
     }
 
-    modifier Voted (uint256 category,uint256 nonce, bytes32 voteSignature, uint256 votesNeeded) {
-        bytes32 key;
-        if (nonce == 0) {
-            key = bytes32(block.number + uint256(voteSignature));
-            _category[category].createVote(key, votesNeeded, msg.sender);
-            emit VoteCreated(block.number, key);
+    modifier Voted (uint256 category, bytes32 voteSignature, uint256 votesNeeded) {
+        require(votesNeeded > 1, 'needed votes must be more than one');
+        if (_category[category].getVotesNeeded(voteSignature) <= 1) {
+            _category[category].createVote(voteSignature, votesNeeded, msg.sender);
+            emit VoteCreated(category, voteSignature);
         } else {
-            key = bytes32(nonce + uint256(voteSignature));
-            _category[category].upVote(key, msg.sender);
+            _category[category].upVote(voteSignature, msg.sender);
         }
-        if (_category[category].isSuccessful(key))
+        if (_category[category].isSuccessful(voteSignature))
         {
             delete _category[category];
             _;

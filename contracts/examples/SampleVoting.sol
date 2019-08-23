@@ -33,8 +33,8 @@ contract SampleVoting is Voteable {
 
     constructor () public {}
 
-    function sampleVoteFunction (uint256 nonce, string memory param1, string memory param2) public
-        Voted (0x00,nonce, keccak256(abi.encodePacked(param1, param2)), 3) {
+    function sampleVoteFunction (string memory param1, string memory param2) public
+        Voted (0x00, keccak256(abi.encodePacked(param1, param2)), 3) {
         // the successful vote action
         emit SampleVote();
     }
