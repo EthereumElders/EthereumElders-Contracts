@@ -22,19 +22,19 @@
 
 pragma solidity ^0.5.1;
 
-import {Voteable} from "../votebased/Voteable.sol";
+import {Electionable} from "../votebased/Electionable.sol";
 
 /**
 * Example on the usage of the Voteable instance
 */
-contract SampleVoting is Voteable {
+contract SampleVoting is Electionable {
 
     event SampleVote();
 
     constructor () public {}
 
     function sampleVoteFunction (string memory param1, string memory param2) public
-        Voted (0x00, keccak256(abi.encodePacked(param1, param2)), 3) {
+        Voted ('SampleElectionTopic', keccak256(abi.encodePacked(param1, param2)), 3) {
         // the successful vote action
         emit SampleVote();
     }

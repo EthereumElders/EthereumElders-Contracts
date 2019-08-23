@@ -30,53 +30,53 @@ import {EldersVote} from "./EldersVote.sol";
 * abi pack encoding with hashing and a nonce
 * nonce is zero, when it's intended to create a vote
 */
-contract Voteable {
+contract Electionable {
 
     using EldersVote for EldersVote.OperationsTable;
 
     event Vote(bytes32, uint256, uint256);
-    event VoteCreated(uint256, bytes32);
+    event VoteCreated(string, bytes32);
 
-    mapping(uint256 => EldersVote.OperationsTable) private _category;
+    mapping(string => EldersVote.OperationsTable) private _elections;
 
 
 
     constructor() internal {
     }
 
-    modifier Voted (uint256 category, bytes32 voteSignature, uint256 votesNeeded) {
+    modifier Voted (string memory election, bytes32 voteSignature, uint256 votesNeeded) {
         require(votesNeeded > 1, 'needed votes must be more than one');
-        if (_category[category].getVotesNeeded(voteSignature) <= 1) {
-            _category[category].createVote(voteSignature, votesNeeded, msg.sender);
-            emit VoteCreated(category, voteSignature);
+        if (_elections[election].getVotesNeeded(voteSignature) <= 1) {
+            _elections[election].createVote(voteSignature, votesNeeded, msg.sender);
+            emit VoteCreated(election, voteSignature);
         } else {
-            _category[category].upVote(voteSignature, msg.sender);
+            _elections[election].upVote(voteSignature, msg.sender);
         }
-        if (_category[category].isSuccessful(voteSignature))
+        if (_elections[election].isSuccessful(voteSignature))
         {
-            delete _category[category];
+            delete _elections[election];
             _;
         }
     }
 
-    function isSuccessful (uint256 category, bytes32 voteSignature) view public returns (bool) {
-        return _category[category].isSuccessful(voteSignature);
+    function isSuccessful (string memory election, bytes32 voteSignature) view public returns (bool) {
+        return _elections[election].isSuccessful(voteSignature);
     }
 
-    function hasVoted (uint256 category, bytes32 voteSignature, address account) view public returns (bool) {
-        return _category[category].hasVoted(voteSignature, account);
+    function hasVoted (string memory election, bytes32 voteSignature, address account) view public returns (bool) {
+        return _elections[election].hasVoted(voteSignature, account);
     }
 
-    function getVotes (uint256 category,bytes32 voteSignature) view public returns (uint256) {
-        return _category[category].getVotes(voteSignature);
+    function getVotes (string memory election,bytes32 voteSignature) view public returns (uint256) {
+        return _elections[election].getVotes(voteSignature);
     }
 
-    function getVotesNeeded (uint256 category, bytes32 voteSignature) view public returns (uint256) {
-        return _category[category].getVotesNeeded(voteSignature);
+    function getVotesNeeded (string memory election, bytes32 voteSignature) view public returns (uint256) {
+        return _elections[election].getVotesNeeded(voteSignature);
     }
 
-    function getOperations (uint256 category) view public returns (bytes32 [] memory) {
-        return _category[category].getOperations();
+    function getOperations (string memory election) view public returns (bytes32 [] memory) {
+        return _elections[election].getOperations();
     }
 
 }
