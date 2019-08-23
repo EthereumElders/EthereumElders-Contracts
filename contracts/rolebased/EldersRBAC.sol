@@ -33,10 +33,8 @@ contract EldersRBAC {
     // Holds the RBAC attributes
     EldersRole.RoleTable roleTable;
 
-    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) {
+    constructor (uint8 _maximumRoleNumber) internal {
         roleTable.SetMaximumRoles (_maximumRoleNumber);
-        masterRole = _masterRole;
-        _setRole(msg.sender, masterRole);
     }
 
     modifier onlyRoleNumber (uint8 roleNumber) {

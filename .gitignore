@@ -1,5 +1,9 @@
 ﻿# Project build directory
 build
+docs
+coverage
+scripts
+node_modules
 
 # Visual Studio
 .vs

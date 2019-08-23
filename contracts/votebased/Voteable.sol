@@ -27,7 +27,7 @@ import {EldersVote} from "./EldersVote.sol";
 /**
 * Ethereum Elders votable smart contract instance
 * provides a seamless voting mechanism through explicit usage of
-* abi pack encoding and a nonce
+* abi pack encoding with hashing and a nonce
 * nonce is zero, when it's intended to create a vote
 */
 contract Voteable {
@@ -41,17 +41,17 @@ contract Voteable {
 
 
 
-    constructor() {
+    constructor() internal {
     }
 
-    modifier Voteable (uint256 nonce, bytes32 voteSignature, uint256 votesNeeded) {
-        uint256 key;
+    modifier Voted (uint256 nonce, bytes32 voteSignature, uint256 votesNeeded) {
+        bytes32 key;
         if (nonce == 0) {
-            key = block.number + uint256(voteSignature);
+            key = bytes32(block.number + uint256(voteSignature));
             _operationsTable.createVote(key, votesNeeded, msg.sender);
             emit VoteCreated(block.number, key);
         } else {
-            key = nonce + uint256(voteSignature);
+            key = bytes32(nonce + uint256(voteSignature));
             _operationsTable.upVote(key, msg.sender);
         }
         if (_operationsTable.isSuccessful(key))
