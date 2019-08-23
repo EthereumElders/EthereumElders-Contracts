@@ -37,47 +37,48 @@ contract Voteable {
     event Vote(bytes32, uint256, uint256);
     event VoteCreated(uint256, bytes32);
 
-    EldersVote.OperationsTable private _operationsTable;
+    mapping(uint256 => EldersVote.OperationsTable) private _category;
 
 
 
     constructor() internal {
     }
 
-    modifier Voted (uint256 nonce, bytes32 voteSignature, uint256 votesNeeded) {
+    modifier Voted (uint256 category,uint256 nonce, bytes32 voteSignature, uint256 votesNeeded) {
         bytes32 key;
         if (nonce == 0) {
             key = bytes32(block.number + uint256(voteSignature));
-            _operationsTable.createVote(key, votesNeeded, msg.sender);
+            _category[category].createVote(key, votesNeeded, msg.sender);
             emit VoteCreated(block.number, key);
         } else {
             key = bytes32(nonce + uint256(voteSignature));
-            _operationsTable.upVote(key, msg.sender);
+            _category[category].upVote(key, msg.sender);
         }
-        if (_operationsTable.isSuccessful(key))
+        if (_category[category].isSuccessful(key))
         {
+            delete _category[category];
             _;
         }
     }
 
-    function isSuccessful (bytes32 voteSignature) view public returns (bool) {
-        return _operationsTable.isSuccessful(voteSignature);
+    function isSuccessful (uint256 category, bytes32 voteSignature) view public returns (bool) {
+        return _category[category].isSuccessful(voteSignature);
     }
 
-    function hasVoted (bytes32 voteSignature, address account) view public returns (bool) {
-        return _operationsTable.hasVoted(voteSignature, account);
+    function hasVoted (uint256 category, bytes32 voteSignature, address account) view public returns (bool) {
+        return _category[category].hasVoted(voteSignature, account);
     }
 
-    function getVotes (bytes32 voteSignature) view public returns (uint256) {
-        return _operationsTable.getVotes(voteSignature);
+    function getVotes (uint256 category,bytes32 voteSignature) view public returns (uint256) {
+        return _category[category].getVotes(voteSignature);
     }
 
-    function getVotesNeeded (bytes32 voteSignature) view public returns (uint256) {
-        return _operationsTable.getVotesNeeded(voteSignature);
+    function getVotesNeeded (uint256 category, bytes32 voteSignature) view public returns (uint256) {
+        return _category[category].getVotesNeeded(voteSignature);
     }
 
-    function getOperations () view public returns (bytes32 [] memory) {
-        return _operationsTable.getOperations();
+    function getOperations (uint256 category) view public returns (bytes32 [] memory) {
+        return _category[category].getOperations();
     }
 
 }

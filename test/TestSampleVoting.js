@@ -55,5 +55,7 @@ contract('SampleVoting', async (accounts) => {
             return true;
         },'should emit an event');
 
+        let operations = await contract.getOperations.call(0x00);
+        assert.equal(operations.length, 0, 'ensure storage is cleaned up');
     });
 });
