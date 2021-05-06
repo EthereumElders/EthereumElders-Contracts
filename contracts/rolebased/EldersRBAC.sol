@@ -38,7 +38,7 @@ contract EldersRBAC {
 
 
 
-    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) public {
+    constructor (uint8 _maximumRoleNumber, uint256 _masterRole) {
         roleTable.SetMaximumRoles (_maximumRoleNumber);
         masterRole = _masterRole;
         _setRole(msg.sender, masterRole);
@@ -98,7 +98,7 @@ contract EldersRBAC {
         _removeRole(account, roleNumber);
     }
 
-    function roleExists (address account, uint8 roleNumber) view public returns (bool) {
-        _roleExists(account, roleNumber);
+      function roleExists (address account, uint8 roleNumber) view public returns (bool) {
+      return  _roleExists(account, roleNumber);
     }
 }
