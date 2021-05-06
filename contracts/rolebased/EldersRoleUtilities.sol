@@ -42,7 +42,7 @@ library EldersRoleUtilities {
     * @param roleNumber uint8 - role as a number
     */
     function RoleExists (uint256 role, uint8 roleNumber) pure internal returns(bool) {
-        return ( role & RoleNumberToBytes(roleNumber) ) > 0;
+        return ( role & RoleNumberToBytes(roleNumber) )> 0x0 ;
     }
 
     /**
